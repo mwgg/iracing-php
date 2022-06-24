@@ -1,0 +1,20 @@
+{
+    "name": "mwgg/iracing-php",
+    "description": "iRacing Data API wrapper for PHP",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "iRacingPHP\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "mwgg"
+        }
+    ],
+    "require": {
+        "php" : ">=7.3",
+        "guzzlehttp/guzzle": "^7.4"
+    }
+}
