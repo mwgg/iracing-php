@@ -29,7 +29,7 @@ use iRacingPHP\iRacing;
 $iracing = new iRacing('your@login.com', 'iRacingPassword');
 $track = $iracing->stats->member_summary();
 ```
-Note that the `cust_id` parameter is optional in this case, thus not provided. All parameters that are denoted as required by the API documentation must be passed as separate parameters to the API method, optional parameters are grouped into a separate array parameter. This makes it easier to deal with methods that have a large number of optional parameters.
+Note that the `cust_id` parameter is optional in this case, thus may be omitted. All parameters that are denoted as required by the API documentation must be passed as separate parameters to the API method, optional parameters are grouped into a separate array parameter. This makes it easier to deal with methods that have a large number of optional parameters.
 
 API Documentation excerpt:
 ```json
@@ -60,7 +60,7 @@ iRacingPHP:
 ```php
 use iRacingPHP\iRacing;
 $iracing = new iRacing('your@login.com', 'iRacingPassword');
-$track = $iracing->league->season_sessions(12345, 54321, [
+$track = $iracing->league->season_standings(12345, 54321, [
     'car_id' => 123
 ]);
 ```
