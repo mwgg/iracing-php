@@ -14,6 +14,6 @@ class Team extends DataClass
     public function get(int $team_id, array $params = [])
     {
         $params['team_id'] = $team_id;
-        return $this->api->request('/stats/member_career', $params);
+        return $this->api->request('/team/get', $params);
     }
 }

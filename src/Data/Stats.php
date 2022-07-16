@@ -16,6 +16,8 @@ class Stats extends DataClass
     }
 
     /**
+     * Divisions are 0-based: 0 is Division 1, 10 is Rookie. See /data/constants/divisons for more information. Always for the authenticated member.
+     * 
      * @param integer $season_id
      * @param integer $event_type The event type code for the division type: 4 - Time Trial; 5 - Race
      * @return mixed
@@ -139,4 +141,19 @@ class Stats extends DataClass
         );
         return $this->api->request('/stats/season_qualify_results', $params);
     }
+
+    /**
+     * @param integer $car_id
+     * @param integer $track_id
+     * @param integer ['season_year'] Limit best times to a given year.
+     * @param integer ['season_quarter'] Limit best times to a given quarter; only applicable when year is used.
+     * @return mixed
+     */
+    public function world_records(int $car_id, int $track_id, array $params = [])
+    {
+        $params['car_id'] = $car_id;
+        $params['track_id'] = $track_id;
+        return $this->api->request('/stats/world_records', $params);
+    }
+
 }
