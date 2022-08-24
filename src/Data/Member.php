@@ -45,4 +45,13 @@ class Member extends DataClass
         return $this->api->request('/member/info');
     }
 
+    /**
+     * @param int ['cust_id'] Defaults to the authenticated member.
+     * @return mixed
+     */
+    public function profile(array $params = [])
+    {
+        return $this->api->request('/member/profile');
+    }
+
 }

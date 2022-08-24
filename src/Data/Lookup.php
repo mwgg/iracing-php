@@ -32,6 +32,17 @@ class Lookup extends DataClass
     }
 
     /**
+     * @param string $search_term A cust_id or partial name for which to search.
+     * @param int ['league_id'] Narrow the search to the roster of the given league.
+     * @return mixed
+     */
+    public function drivers(string $search_term, array $params = [])
+    {
+        $params['search_term'] = $search_term;
+        return $this->api->request('/lookup/drivers', $params);
+    }
+
+    /**
      * weather=weather_wind_speed_units
      * weather=weather_wind_speed_max
      * weather=weather_wind_speed_min

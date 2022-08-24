@@ -61,6 +61,15 @@ class League extends DataClass
     }
 
     /**
+     * @param boolean ['include_league']
+     * @return mixed
+     */
+    public function membership(array $params = [])
+    {
+        return $this->api->request('/league/membership', $params);
+    }
+
+    /**
      * @param integer $league_id
      * @param boolean ['retired'] If true include seasons which are no longer active.
      * @return mixed
