@@ -27,10 +27,10 @@ class Results extends DataClass
      */
     public function event_log(int $subsession_id, int $simsession_number)
     {
-        $params = array(
+        $params = [
             'subsession_id' => $subsession_id,
             'simsession_number' => $simsession_number
-        );
+        ];
         return $this->api->request('/results/event_log', $params);
     }
 
@@ -41,10 +41,10 @@ class Results extends DataClass
      */
     public function lap_chart_data(int $subsession_id, int $simsession_number)
     {
-        $params = array(
+        $params = [
             'subsession_id' => $subsession_id,
             'simsession_number' => $simsession_number
-        );
+        ];
         return $this->api->request('/results/lap_chart_data', $params);
     }
 

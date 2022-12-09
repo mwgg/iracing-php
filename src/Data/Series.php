@@ -25,6 +25,19 @@ class Series extends DataClass
     }
 
     /**
+     * @param integer $series_id
+     *
+     * @return mixed
+     */
+    public function past_sessions(int $series_id)
+    {
+        $params = [
+            'series_id' => $series_id
+        ];
+        return $this->api->request('/series/past_sessions', $params);
+    }
+
+    /**
      * @param boolean ['include_series']
      *
      * @return mixed

@@ -8,19 +8,28 @@ class Member extends DataClass
 {
 
     /**
-     * @param integer $cust_id
-     * @param integer $category_id 1 - Oval; 2 - Road; 3 - Dirt oval; 4 - Dirt road
-     * @param integer $chart_type 1 - iRating; 2 - TT Rating; 3 - License/SR
+     * @param int ['cust_id'] Defaults to the authenticated member.
+     * @return mixed
+     */
+    public function awards(array $params = [])
+    {
+        return $this->api->request('/member/awards', $params);
+    }
+
+    /**
+     * @param int $cust_id
+     * @param int $category_id 1 - Oval; 2 - Road; 3 - Dirt oval; 4 - Dirt road
+     * @param int $chart_type 1 - iRating; 2 - TT Rating; 3 - License/SR
      * 
      * @return mixed
      */
     public function chart_data(int $cust_id, int $category_id, int $chart_type)
     {
-        $params = array(
+        $params = [
             'cust_id' => $cust_id,
             'category_id' => $category_id,
             'chart_type' => $chart_type
-        );
+        ];
         return $this->api->request('/member/chart_data', $params);
     }
 
@@ -32,7 +41,18 @@ class Member extends DataClass
      */
     public function get(string $cust_ids, array $params = [])
     {
+        $params['cust_ids'] = $cust_ids;
         return $this->api->request('/member/get', $params);
+    }
+
+    /**
+     * Always the authenticated member.
+     *
+     * @return mixed
+     */
+    public function participation_credits()
+    {
+        return $this->api->request('/member/participation_credits');
     }
 
     /**
@@ -51,7 +71,7 @@ class Member extends DataClass
      */
     public function profile(array $params = [])
     {
-        return $this->api->request('/member/profile');
+        return $this->api->request('/member/profile', $params);
     }
 
 }
