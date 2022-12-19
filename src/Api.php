@@ -33,6 +33,7 @@ class Api
      * Calls requestLogin() to make the authentication request, checks the response.
      *
      * @return mixed Authentication response
+     * @throws AuthenticationFailedException
      */
     private function authenticate()
     {
@@ -64,6 +65,7 @@ class Api
      * Makes a POST request to authenticate.
      *
      * @return mixed Authentication result
+     * @throws AuthenticationRequestFailedException
      */
     private function requestLogin()
     {
@@ -96,6 +98,7 @@ class Api
      *
      * @param string $url
      * @return mixed
+     * @throws DataRequestFailedException
      */
     private function retrieveData(string $url)
     {
@@ -106,10 +109,35 @@ class Api
         }
         catch(\GuzzleHttp\Exception\BadResponseException $e)
         {
-            $response = $e->getResponse();
             throw new DataRequestFailedException($e->getMessage(), 0, $e);
         }
         return null;
+    }
+
+    /**
+     * Retrieves cached data chunks from the URL provided by the API.
+     *
+     * @param mixed $body
+     * @return mixed
+     * @throws DataRequestFailedException
+     */
+    private function retrieveChunks(mixed $body)
+    {
+        $result = [];
+        try
+        {
+            $baseUrl = $body->data->chunk_info->base_download_url;
+            foreach($body->data->chunk_info->chunk_file_names as $fileName)
+            {
+                $response = $this->guzzle->request('GET', $baseUrl . $fileName);
+                $result[] = json_decode($response->getBody());
+            }
+            return $result;
+        }
+        catch(\GuzzleHttp\Exception\BadResponseException $e)
+        {
+            throw new DataRequestFailedException($e->getMessage(), 0, $e);
+        }
     }
 
     /**
@@ -132,13 +160,19 @@ class Api
             $this->setRateLimits($response);
 
             $responseBody = json_decode($response->getBody());
-            $data = $this->retrieveData($responseBody->link);
-
-            return $data;
+            if(isset($responseBody->link))
+            {
+                return $this->retrieveData($responseBody->link);
+            }
+            else if(isset($responseBody->data))
+            {
+                return $this->retrieveChunks($responseBody);
+            }
         }
         catch(\GuzzleHttp\Exception\BadResponseException $e)
         {
             $response = $e->getResponse();
+            $this->setRateLimits($response);
             if($this->shouldRetryRequest($response, $e->getMessage(), $e))
             {
                 return $this->request($endpoint, $data);
@@ -166,6 +200,9 @@ class Api
      * @param \GuzzleHttp\Psr7\Response $response Response returned by the request
      * @param string $message Response message to be injected into Exceptions
      * @return boolean If another attempt to make the request should be made (after authentication)
+     * @throws RequestRateLimitedException
+     * @throws SiteMaintenanceException
+     * @throws RequestFailedException|AuthenticationFailedException
      */
     private function shouldRetryRequest(\GuzzleHttp\Psr7\Response $response, string $message, \Exception $oldEx)
     {
