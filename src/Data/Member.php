@@ -23,13 +23,10 @@ class Member extends DataClass
      * 
      * @return mixed
      */
-    public function chart_data(int $cust_id, int $category_id, int $chart_type)
+    public function chart_data(int $category_id, int $chart_type, array $params = [])
     {
-        $params = [
-            'cust_id' => $cust_id,
-            'category_id' => $category_id,
-            'chart_type' => $chart_type
-        ];
+        $params['category_id'] = $category_id;
+        $params['chart_type'] = $chart_type;
         return $this->api->request('/member/chart_data', $params);
     }
 
