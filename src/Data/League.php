@@ -61,6 +61,7 @@ class League extends DataClass
     }
 
     /**
+     * @param integer ['cust_id'] If different from the authenticated member, the following resrictions apply: - Caller cannot be on requested customer's block list or an empty list will result; - Requested customer cannot have their online activity prefrence set to hidden or an empty list will result; - Only leagues for which the requested customer is an admin and the league roster is not private are returned.
      * @param boolean ['include_league']
      * @return mixed
      */

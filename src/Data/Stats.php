@@ -44,6 +44,17 @@ class Stats extends DataClass
 
     /**
      * @param integer ['cust_id'] Defaults to the authenticated member.
+     * @param integer ['year'] Season year; if not supplied the current calendar year (UTC) is used.
+     * @param integer ['season'] Season (quarter) within the year; if not supplied the recap will be fore the entire year.
+     * @return mixed
+     */
+    public function member_recap(array $params = [])
+    {
+        return $this->api->request('/stats/member_recap', $params);
+    }
+
+    /**
+     * @param integer ['cust_id'] Defaults to the authenticated member.
      * @return mixed
      */
     public function member_recent_races(array $params = [])

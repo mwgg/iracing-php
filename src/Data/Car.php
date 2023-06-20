@@ -3,7 +3,6 @@
 namespace iRacingPHP\Data;
 
 use iRacingPHP\DataClass;
-use iRacingPHP\Api;
 
 class Car extends DataClass
 {

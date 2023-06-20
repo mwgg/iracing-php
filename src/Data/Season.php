@@ -31,4 +31,13 @@ class Season extends DataClass
         return $this->api->request('/season/race_guide', $params);
     }
 
+    /**
+     * @param string ['event_types'] Types of events to include in the search. Defaults to all. ?event_types=2,3,4,5
+     * @return mixed
+     */
+    public function spectator_subsessionids(array $params = [])
+    {
+        return $this->api->request('/season/spectator_subsessionids', $params);
+    }
+
 }
