@@ -21,20 +21,20 @@ use iRacingPHP\Exceptions\ApiServiceNotFoundException;
 class iRacing
 {
     public Api $api;
-    public DataClass $car;
-    public DataClass $carclass;
-    public DataClass $constants;
-    public DataClass $hosted;
-    public DataClass $league;
-    public DataClass $lookup;
-    public DataClass $member;
-    public DataClass $results;
-    public DataClass $season;
-    public DataClass $series;
-    public DataClass $stats;
-    public DataClass $team;
-    public DataClass $track;
-    public DataClass $time_attack;
+    public Car $car;
+    public CarClass $carclass;
+    public Constants $constants;
+    public Hosted $hosted;
+    public League $league;
+    public Lookup $lookup;
+    public Member $member;
+    public Results $results;
+    public Season $season;
+    public Series $series;
+    public Stats $stats;
+    public Team $team;
+    public Track $track;
+    public TimeAttack $time_attack;
     
     function __construct(string $username, string $password, $cookiejar = LibConstants::COOKIEJAR)
     {
