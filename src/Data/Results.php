@@ -74,6 +74,7 @@ class Results extends DataClass
      * @param string ['finish_range_begin'] Session finish times. ISO-8601 UTC time zero offset: "2022-04-01T15:45Z".
      * @param string ['finish_range_end'] ISO-8601 UTC time zero offset: "2022-04-01T15:45Z". Exclusive. May be omitted if finish_range_begin is less than 90 days in the past.
      * @param integer ['cust_id'] The participant's customer ID.
+     * @param integer ['team_id'] The team ID to search for. Takes priority over cust_id if both are supplied.
      * @param integer ['host_cust_id'] The host's customer ID.
      * @param string ['session_name'] Part or all of the session's name.
      * @param integer ['league_id'] Include only results for the league with this ID.
@@ -103,6 +104,7 @@ class Results extends DataClass
      * @param string ['finish_range_begin'] Session finish times. ISO-8601 UTC time zero offset: "2022-04-01T15:45Z".
      * @param string ['finish_range_end'] ISO-8601 UTC time zero offset: "2022-04-01T15:45Z". Exclusive. May be omitted if finish_range_begin is less than 90 days in the past.
      * @param integer ['cust_id'] Include only sessions in which this customer participated.
+     * @param integer ['team_id'] Include only sessions in which this team participated. Takes priority over cust_id if both are supplied.
      * @param integer ['series_id'] Include only sessions for series with this ID.
      * @param integer ['race_week_num'] Include only sessions with this race week number.
      * @param boolean ['official_only'] If true, include only sessions earning championship points. Defaults to all.
