@@ -16,7 +16,6 @@ use iRacingPHP\Data\Stats;
 use iRacingPHP\Data\Team;
 use iRacingPHP\Data\TimeAttack;
 use iRacingPHP\Data\Track;
-use iRacingPHP\Exceptions\ApiServiceNotFoundException;
 
 class iRacing
 {

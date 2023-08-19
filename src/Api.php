@@ -9,6 +9,7 @@ use iRacingPHP\Exceptions\SiteMaintenanceException;
 use iRacingPHP\Exceptions\RequestFailedException;
 use iRacingPHP\Models\RateLimits;
 use \GuzzleHttp\Cookie\FileCookieJar;
+use iRacingPHP\Exceptions\DataRequestFailedException;
 
 class Api
 {
@@ -94,7 +95,8 @@ class Api
     }
 
     /**
-     * Retrieved cached data via the URL provided by the API.
+     * Retrieved cached data via the URL provided by the API,
+     * and any associated chunks.
      *
      * @param string $url
      * @return mixed
@@ -105,7 +107,15 @@ class Api
         try
         {
             $response = $this->guzzle->request('GET', $url);
-            return json_decode($response->getBody());
+            $responseBody = json_decode($response->getBody());
+
+            if(isset($responseBody->chunk_info))
+            {
+                $responseBody->data = $this->retrieveChunks($responseBody->chunk_info);
+                unset($responseBody->chunk_info);
+            }
+
+            return $responseBody;
         }
         catch(\GuzzleHttp\Exception\BadResponseException $e)
         {
@@ -121,17 +131,18 @@ class Api
      * @return mixed
      * @throws DataRequestFailedException
      */
-    private function retrieveChunks(mixed $body)
+    private function retrieveChunks(mixed $chunks)
     {
         $result = [];
         try
         {
-            $baseUrl = $body->data->chunk_info->base_download_url;
-            foreach($body->data->chunk_info->chunk_file_names as $fileName)
+            $baseUrl = $chunks->base_download_url;
+            foreach($chunks->chunk_file_names as $fileName)
             {
                 $response = $this->guzzle->request('GET', $baseUrl . $fileName);
                 $result[] = json_decode($response->getBody());
             }
+
             return $result;
         }
         catch(\GuzzleHttp\Exception\BadResponseException $e)
@@ -141,7 +152,8 @@ class Api
     }
 
     /**
-     * Public request method, used by the Data classes. Retrieves the cached data link from the API endpoint first, then the data itself via the retrieveData() method.
+     * Public request method, used by the Data classes.
+     * Retrieves the cached data link or chunk data from the API endpoint, then the data itself.
      *
      * @param string $endpoint 
      * @param array $data Optional parameters to be passed with the request
@@ -164,9 +176,9 @@ class Api
             {
                 return $this->retrieveData($responseBody->link);
             }
-            else if(isset($responseBody->data))
+            if(isset($responseBody->data->chunk_info))
             {
-                return $this->retrieveChunks($responseBody);
+                return $this->retrieveChunks($responseBody->data->chunk_info);
             }
         }
         catch(\GuzzleHttp\Exception\BadResponseException $e)
@@ -182,7 +194,7 @@ class Api
     }
 
     /**
-     * Updates the rate limit values
+     * Updates the rate limit values.
      *
      * @param \GuzzleHttp\Psr7\Response $response API request response object.
      * @return void
@@ -199,34 +211,25 @@ class Api
      *
      * @param \GuzzleHttp\Psr7\Response $response Response returned by the request
      * @param string $message Response message to be injected into Exceptions
-     * @return boolean If another attempt to make the request should be made (after authentication)
+     * @return boolean True if another attempt to make the request should be made (after authentication)
      * @throws RequestRateLimitedException
      * @throws SiteMaintenanceException
      * @throws RequestFailedException|AuthenticationFailedException
      */
     private function shouldRetryRequest(\GuzzleHttp\Psr7\Response $response, string $message, \Exception $oldEx)
     {
-        $code = $response->getStatusCode();
-
-        if($code === 401) // Unauthorized
+        switch($response->getStatusCode())
         {
-            $this->authenticate();
-            return true;
-        }
-        else if($code === 429) // Rate Limited
-        {
-            throw new RequestRateLimitedException('Rate limit exceeded', 0, $oldEx);
-        }
-        else if($code === 503) // Maintenane
-        {
-            throw new SiteMaintenanceException('Site maintenance', 0, $oldEx);
-        }
-        else // Whatever else
-        {
-            throw new RequestFailedException($message, 0, $oldEx);
+            case 401:
+                $this->authenticate();
+                return true;
+            case 429:
+                throw new RequestRateLimitedException('Rate limit exceeded', 0, $oldEx);
+            case 503:
+                throw new SiteMaintenanceException('Site maintenance', 0, $oldEx);
         }
 
-        return false;
+        throw new RequestFailedException($message, 0, $oldEx);
     }
 
 }
